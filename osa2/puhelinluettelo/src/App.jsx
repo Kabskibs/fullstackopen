@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 
-const Filter = (props) => ( <>filter shown with <input value={props.filter} onChange={props.onChange}/></> )
+import personsService from './services/persons'
 
-const AddNew = (props) => {
+const Filter = props => <>filter shown with <input value={props.filter} onChange={props.onChange}/></>
+
+const AddNew = props => {
   return (
     <>
       <form>
@@ -17,19 +18,35 @@ const AddNew = (props) => {
 )
 }
 
-const Numbers = (props) => {
+const Numbers = props => {
   return (
     <>
       {props.persons.map(function(p) {
         if (p.name.toLowerCase().includes(props.filter.toLowerCase())) {
-          return <Name key={p.name} name={p.name} number={p.number}></Name>
+          return (
+            <div key={p.name}>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <Name key={p.name} name={p.name} number={p.number}></Name>
+                    </td>
+                    <td>
+                      <DeletePerson id={p.id} deleteFunc={props.deletePerson}/>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )
         }
       })}
     </>
   )
 }
 
-const Name = (props) => ( <>{props.name} {props.number}<br></br></> )
+const Name = props => ( <>{props.name} {props.number}<br></br></> )
+const DeletePerson = props => <button onClick={ () => props.deleteFunc(props.id) }>delete</button>
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -38,12 +55,17 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   useEffect( () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personsService
+      .getAll()
+      .then(responseData => {
+        setPersons(responseData)
       })
   }, [])
+
+  const resetFields = () => {
+    setNewName('')
+    setNewNumber('')
+  }
 
   const addNewName = (event) => {
     event.preventDefault()
@@ -52,13 +74,39 @@ const App = () => {
         number: newNumber,
     }
     if (persons.some( p => p['name'] === nameObject['name'] )) {
-      alert(`${newName} is already added to phonebook`)
-      setNewName('')
-      setNewNumber('')
+      if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        updateNumber(nameObject)
+        resetFields()
+      } else {
+        resetFields()
+      }
     } else {
-      setPersons(persons.concat(nameObject))
-      setNewName('')
-      setNewNumber('')
+      personsService
+        .create(nameObject)
+        .then(responseData => {
+          setPersons(persons.concat(responseData))
+        })
+      resetFields()
+    }
+  }
+
+  const updateNumber = (nameObject) => {
+      const person = persons.find(p => p.name === nameObject.name)
+      const changedPerson = { ...person, number: nameObject.number}
+      personsService
+        .update(changedPerson)
+        .then(responseData => {
+            setPersons(persons.map(person => person.id !== changedPerson.id ? person : responseData))
+        })
+  }
+
+  const deletePerson = (id) => {
+    if (confirm(`delete ${id} ?`)) {
+      personsService
+        .deleteById(id)
+        .then(responseData => {
+          setPersons(persons.filter((person) => person.id !== responseData.id))
+        })
     }
   }
 
@@ -83,7 +131,7 @@ const App = () => {
               newNumber={newNumber} changeNumber={handleInputChangeNumber}
               onClick={addNewName}/>
       <h2>Numbers</h2>
-      <Numbers persons={persons} filter={filter}/>
+      <Numbers persons={persons} filter={filter} deletePerson={deletePerson}/>
     </div>
   )
 }
