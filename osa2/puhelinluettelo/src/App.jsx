@@ -2,6 +2,25 @@ import { useEffect, useState } from 'react'
 
 import personsService from './services/persons'
 
+const InfoMessage = (props) => {
+  if (props.message === null) {
+    return null
+  }
+  if (props.state === 0) {
+    return (
+      <div className='infomessageSuccess'>
+        {props.message}
+      </div>
+    )
+  } else if (props.state === -1) {
+    return (
+      <div className='infomessageFail'>
+        {props.message}
+      </div>
+    )
+  }
+}
+
 const Filter = props => <>filter shown with <input value={props.filter} onChange={props.onChange}/></>
 
 const AddNew = props => {
@@ -53,6 +72,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [infoMessage, setInfoMessage] = useState(null)
+  const [infoState, setInfoState] = useState(0)
 
   useEffect( () => {
     personsService
@@ -85,6 +106,10 @@ const App = () => {
         .create(nameObject)
         .then(responseData => {
           setPersons(persons.concat(responseData))
+          setInfoMessage(`Added ${nameObject.name}`)
+          setTimeout(() => {
+            setInfoMessage(null)
+          }, 5000) 
         })
       resetFields()
     }
@@ -97,6 +122,18 @@ const App = () => {
         .update(changedPerson)
         .then(responseData => {
             setPersons(persons.map(person => person.id !== changedPerson.id ? person : responseData))
+            setInfoMessage(`Updated ${nameObject.name}`)
+            setTimeout(() => {
+              setInfoMessage(null)
+            }, 5000) 
+        })
+        .catch(error => {
+          setInfoState(-1)
+          setInfoMessage(`Information of ${nameObject.name} has already been removed from server`)
+            setTimeout(() => {
+              setInfoMessage(null)
+              setInfoState(0)
+            }, 5000) 
         })
   }
 
@@ -106,6 +143,10 @@ const App = () => {
         .deleteById(id)
         .then(responseData => {
           setPersons(persons.filter((person) => person.id !== responseData.id))
+          setInfoMessage(`Deleted ${responseData.name}`)
+          setTimeout(() => {
+            setInfoMessage(null)
+          }, 5000) 
         })
     }
   }
@@ -125,6 +166,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <InfoMessage message={infoMessage} state={infoState}/>
       <Filter value={filter} onChange={handleInputChangeFilter}/>
       <h2>add a new</h2>
       <AddNew newName={newName} changeName={handleInputChangeName}
