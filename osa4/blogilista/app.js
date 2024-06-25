@@ -7,7 +7,6 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
 
-// const mongoUrl = config.MONGODB_URI
 mongoose.connect(config.MONGODB_URI)
 
 app.use(cors())
