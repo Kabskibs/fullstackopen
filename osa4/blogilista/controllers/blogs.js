@@ -10,13 +10,23 @@ blogsRouter.get('/', (request, response) => {
 })
 
 blogsRouter.post('/', (request, response) => {
-  const blog = new Blog(request.body)
-
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result)
+  const body = request.body
+  if (!body.title || !body.url) {
+    response.status(400).end()
+  } else {
+    const blog = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0
     })
+  
+    blog
+      .save()
+      .then(result => {
+        response.status(201).json(result)
+      })
+  }
 })
 
 module.exports = blogsRouter

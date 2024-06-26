@@ -62,6 +62,46 @@ describe('api tests', () => {
     assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
     assert(titles.includes('api_test_valid_post'))
   })
+
+  test('post - 0 added if no likes specified', async () => {
+    const newBlog = {
+      title: "api_test_nolikes_post",
+      author: "nolikes ASD",
+      url: "apitest.test"
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    const response = await api.get('/api/blogs')
+    const lastElement = response.body[response.body.length - 1]
+    assert.strictEqual(lastElement.likes, 0)
+  })
+
+  test('post - 400 if no title field', async () => {
+    const newBlog = {
+      author: "nolikes ASD",
+      url: "apitest.test",
+      likes: 123
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  })
+
+  test('post - 400 if no URL field', async () => {
+    const newBlog = {
+      author: "nolikes ASD",
+      title: "valid title",
+      likes: 123
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  })
 })
 
 after(async () => {
