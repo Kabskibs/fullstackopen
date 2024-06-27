@@ -13,94 +13,162 @@ beforeEach(async () => {
   await Blog.insertMany(helper.initialBlogs)
 })
 
-describe('database tests', () => {
+describe('DATABASE tests', () => {
   test('there are three posts', async () => {
     const response = await api.get('/api/blogs')
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 })
 
-describe('api tests', () => {
-  test('get - right amount of posts', async () => {
-    const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+describe.only('API tests', () => {
+  describe('GET tests', () => {
+    test('right amount of posts', async () => {
+      const response = await api.get('/api/blogs')
+      assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    })
+
+    test('response is in json', async () => {
+      await api
+        .get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+    })
+  
+    test('first posts title is correct', async () => {
+      const response = await api.get('/api/blogs')
+      const titles = response.body.map(post => post.title)
+      assert.strictEqual(titles[0], helper.initialBlogs[0].title)
+    })
+  
+    test('bodys id is in right format', async () => {
+      const response = await api.get('/api/blogs')
+      const keys = Object.keys(response.body[0])
+      assert(!keys.includes('_id'))
+    })
   })
 
-  test('get - response is in json', async () => {
-    await api
-      .get('/api/blogs')
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
+  describe('POST tests', () => {
+    test('valid post can be added', async () => {
+      const newBlog = {
+        title: "api_test_valid_post",
+        author: "valid ASD",
+        url: "apitest.test",
+        likes: "30"
+      }
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+      const response = await api.get('/api/blogs')
+      const titles = response.body.map(post => post.title)
+      assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
+      assert(titles.includes('api_test_valid_post'))
+    })
+  
+    test('0 added if no likes specified', async () => {
+      const newBlog = {
+        title: "api_test_nolikes_post",
+        author: "nolikes ASD",
+        url: "apitest.test"
+      }
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+      const response = await api.get('/api/blogs')
+      const lastElement = response.body[response.body.length - 1]
+      assert.strictEqual(lastElement.likes, 0)
+    })
+  
+    test('no title field returns 400', async () => {
+      const newBlog = {
+        author: "nolikes ASD",
+        url: "apitest.test",
+        likes: 123
+      }
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+    })
+  
+    test('no URL field returns 400', async () => {
+      const newBlog = {
+        author: "nolikes ASD",
+        title: "valid title",
+        likes: 123
+      }
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+    })
   })
 
-  test('get - first posts title is correct', async () => {
-    const response = await api.get('/api/blogs')
-    const titles = response.body.map(post => post.title)
-    assert.strictEqual(titles[0], helper.initialBlogs[0].title)
+  describe('PUT tests', () => {
+    test('updating likes of latest post works', async () => {
+      const responseBefore = await api.get('/api/blogs')
+      const lastPostBefore = responseBefore.body[responseBefore.body.length - 1]
+      const body = {
+        likes: 1000
+      }
+      await api
+        .put(`/api/blogs/${lastPostBefore.id}`)
+        .send(body)
+        .expect(201)
+      const responseAfter = await api.get(`/api/blogs/`)
+      const lastPostAfter = responseAfter.body[responseAfter.body.length - 1]
+      assert.notStrictEqual(lastPostAfter.likes, lastPostBefore.likes)
+    })
+
+    test('updating nonexistent id returns 404', async () => {
+      const nonexistentId = '667d9a33a4e51b85fe816340'
+      const body = {
+        likes: 1000
+      }
+      await api
+        .put(`/api/blogs/${nonexistentId}`)
+        .send(body)
+        .expect(404)
+    })
+
+    test('invalid id returns 400', async () => {
+      const invalidId = '123qwe456asd'
+      const body = {
+        likes: 1000
+      }
+      await api
+        .put(`/api/blogs/${invalidId}`)
+        .send(body)
+        .expect(400)
+    })
   })
 
-  test('get - bodys id is in right format', async () => {
-    const response = await api.get('/api/blogs')
-    const keys = Object.keys(response.body[0])
-    assert(!keys.includes('_id'))
-  })
+  describe('DELETE tests', () => {
+    test('delete by VALID id returns 204', async () => {
+      const validId = '667d892b8950abec0362b045'
+      await api
+        .delete(`/api/blogs/${validId}`)
+        .expect(204)
+    })
 
-  test('post - valid post can be added', async () => {
-    const newBlog = {
-      title: "api_test_valid_post",
-      author: "valid ASD",
-      url: "apitest.test",
-      likes: "30"
-    }
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
-    const response = await api.get('/api/blogs')
-    const titles = response.body.map(post => post.title)
-    assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
-    assert(titles.includes('api_test_valid_post'))
-  })
+    test('delete by INVALID id returns 400', async () => {
+      const invalidId = '123qwe456asd'
+      await api
+        .delete(`/api/blogs/${invalidId}`)
+        .expect(400)
+    })
 
-  test('post - 0 added if no likes specified', async () => {
-    const newBlog = {
-      title: "api_test_nolikes_post",
-      author: "nolikes ASD",
-      url: "apitest.test"
-    }
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
-    const response = await api.get('/api/blogs')
-    const lastElement = response.body[response.body.length - 1]
-    assert.strictEqual(lastElement.likes, 0)
-  })
-
-  test('post - 400 if no title field', async () => {
-    const newBlog = {
-      author: "nolikes ASD",
-      url: "apitest.test",
-      likes: 123
-    }
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(400)
-  })
-
-  test('post - 400 if no URL field', async () => {
-    const newBlog = {
-      author: "nolikes ASD",
-      title: "valid title",
-      likes: 123
-    }
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(400)
+    test('last blog is actually deleted', async () => {
+      const responseBefore = await api.get('/api/blogs')
+      const lastId = responseBefore.body[responseBefore.body.length - 1].id
+      await api.delete(`/api/blogs/${lastId}`)
+      const responseAfter = await api.get('/api/blogs')
+      const ids = responseAfter.body.map(post => post.id)
+      assert(!ids.includes(lastId))
+    })
   })
 })
 
