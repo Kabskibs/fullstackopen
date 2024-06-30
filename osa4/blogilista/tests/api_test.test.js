@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./api_test_helper')
 
 const api = supertest(app)
@@ -11,6 +12,8 @@ const api = supertest(app)
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
+  await User.deleteMany({})
+  await User.insertMany(helper.initialUsers)
 })
 
 describe('DATABASE tests', () => {
@@ -20,7 +23,7 @@ describe('DATABASE tests', () => {
   })
 })
 
-describe.only('API tests', () => {
+describe('API tests', () => {
   describe('GET tests', () => {
     test('right amount of posts', async () => {
       const response = await api.get('/api/blogs')
@@ -169,6 +172,64 @@ describe.only('API tests', () => {
       const ids = responseAfter.body.map(post => post.id)
       assert(!ids.includes(lastId))
     })
+  })
+})
+
+describe('USERS tests', () => {
+  test('user can be created', async () => {
+    const newUser = {
+      username: "new_user",
+      name: "New User",
+      password: "new_user_password"
+    }
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+    const response = await api.get('/api/users')
+    assert.strictEqual(response.body[response.body.length - 1].username, 'new_user')
+  })
+
+  test('INVALID USERNAME is not accepted', async () => {
+    const invalidUser = {
+      username: "xx",
+      name: "New User",
+      password: "new_user_password"
+    }
+    let responseError = ''
+    await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .expect((response) => {
+        responseError = response.body.error
+      })
+      assert(responseError.includes('User validation failed: username:'))
+    })
+
+  test('INVALID PASSWORD is not accepted', async () => {
+    const invalidPass = {
+      username: "new_user",
+      name: "New User",
+      password: "xx"
+    }
+    await api
+      .post('/api/users')
+      .send(invalidPass)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .expect({ error: 'password must be atleast 3 characters long'})
+  })
+
+  test('duplicate username cannot be created', async () => {
+    const duplicateUser = helper.initialUsers[0]
+    await api
+      .post('/api/users')
+      .send(duplicateUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .expect({ error: 'expected `username` to be unique'})
   })
 })
 

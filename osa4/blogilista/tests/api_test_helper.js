@@ -1,4 +1,5 @@
-const blog = require('../models/blog')
+const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const initialBlogs = [
   {
@@ -21,6 +22,20 @@ const initialBlogs = [
   }
 ]
 
+const initialUsers = [
+  {
+    username: "test_user1",
+    name: "Test User1",
+    password: "test_password"
+  },
+  {
+    username: "test_user2",
+    name: "Test User2",
+    password: "test_password"
+  }
+]
+
 module.exports = {
-  initialBlogs
+  initialBlogs,
+  initialUsers
 }
