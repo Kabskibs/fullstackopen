@@ -10,17 +10,9 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
-
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
   const user = await User.findById(decodedToken.id)
   if (!body.title || !body.url) {
     response.status(400).end()
