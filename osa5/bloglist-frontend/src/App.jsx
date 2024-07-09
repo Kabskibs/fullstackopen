@@ -15,18 +15,34 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+    }
+  }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({
         username, password,
       })
+      window.localStorage.setItem(
+        'loggedBlogUser', JSON.stringify(user)
+      )
       setUser(user)
       setUsername('')
       setPassword('')
     } catch(exception) {
       console.log('ERROR: wrong credentials')
     }
+  }
+
+  const handleLogout = () => {
+    setUser(null)
+    window.localStorage.removeItem('loggedBlogUser')
   }
 
   const loginForm = () => (
@@ -65,11 +81,18 @@ const App = () => {
     </div>
   )
 
+  const userInfo = () => (
+    <div>
+      {user.name} logged in
+      <button onClick={handleLogout}>logout</button>
+    </div>
+  )
+
   return (
     <div>
       {!user && loginForm()}
       {user && <div>
-        <p>{user.name} logged in</p>
+          {userInfo()}
           {blogsForm()}
         </div>
       }
