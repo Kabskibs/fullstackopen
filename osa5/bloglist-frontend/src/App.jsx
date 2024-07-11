@@ -29,6 +29,12 @@ const App = () => {
     }
   }, [])
 
+  const refreshBlogs = () => {
+    blogService.getAll().then(blogs =>
+      setBlogs( blogs )
+    )  
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -79,6 +85,12 @@ const App = () => {
       })
   }
 
+  const handleAddLikes = (blogObject) => {
+    blogService
+      .update(blogObject)
+      .then(refreshBlogs)
+  }
+
   const loginForm = () => (
     <div>
       <h2>login to application</h2>
@@ -117,7 +129,12 @@ const App = () => {
     <div>
       <br></br>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          user={user}
+          handleAddLikes={handleAddLikes}
+        />
       )}
     </div>
   )
