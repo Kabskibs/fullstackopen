@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
+import CreateBlog from './components/CreateBlog'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -80,6 +82,7 @@ const App = () => {
       author: blogAuthor,
       url: blogUrl
     }
+   createBlogRef.current.toggleVisibility()
     blogService
       .create(blogObject)
       .then(returnedBlog => {
@@ -126,42 +129,6 @@ const App = () => {
     </div>
   )
 
-  const createBlog = () => (
-    <div>
-      <h2>create new</h2>
-      <form>
-        <div>
-        title:
-          <input
-            type="text"
-            value={blogTitle}
-            name="blogTitle"
-            onChange={({ target }) => setBlogTitle(target.value)}
-          />
-        </div>
-        <div>
-          author:
-          <input
-            type="text"
-            value={blogAuthor}
-            name="blogAuthor"
-            onChange={({ target }) => setBlogAuthor(target.value)}
-          />
-        </div>
-        <div>
-          URL:
-          <input
-            type="text"
-            value={blogUrl}
-            name="blogUrl"
-            onChange={({ target }) => setBlogUrl(target.value)}
-          />
-        </div>
-        <button type="submit" onClick={handleCreateBlog}>create</button>
-      </form>
-    </div>
-  )
-
   const blogsForm = () => (
     <div>
       <br></br>
@@ -171,6 +138,8 @@ const App = () => {
     </div>
   )
 
+  const createBlogRef = useRef()
+
   return (
     <div>
       <h2>blogs</h2>
@@ -178,7 +147,18 @@ const App = () => {
       {!user && loginForm()}
       {user && <div>
           {userInfo()}
-          {createBlog()}
+          <Togglable buttonLabel='new blog' ref={createBlogRef}>
+            <CreateBlog 
+              title={blogTitle}
+              author={blogAuthor}
+              url={blogUrl}
+              handleTitleChange={({ target }) => setBlogTitle(target.value)}
+              handleAuthorChange={({ target }) => setBlogAuthor(target.value)}
+              handleUrlChange={({ target }) => setBlogUrl(target.value)}
+              handleSubmit={handleCreateBlog}
+            />
+          </Togglable>
+          {/* {createBlog()} */}
           {blogsForm()}
         </div>
       }
