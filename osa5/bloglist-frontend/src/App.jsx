@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,8 @@ const App = () => {
   const [blogTitle, setBlogTitle] = useState('')
   const [blogAuthor, setBlogAuthor] = useState('')
   const [blogUrl, setBlogUrl] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [notificationState, setNotificationState] = useState(0)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -40,8 +43,17 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setNotification(`Logged in as ${user.username}`)
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000);
     } catch(exception) {
-      console.log('ERROR: wrong credentials')
+      setNotificationState(-1)
+      setNotification(`Wrong username or password`)
+      setTimeout(() => {
+        setNotification(null)
+        setNotificationState(0)
+      }, 5000);
     }
   }
 
@@ -49,6 +61,10 @@ const App = () => {
     event.preventDefault()
     setUser(null)
     window.localStorage.removeItem('loggedBlogUser')
+    setNotification(`Logged out`)
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000);
   }
 
   const resetNewBlog = () => {
@@ -69,6 +85,10 @@ const App = () => {
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
         resetNewBlog()
+        setNotification(`Successfully added blog "${blogObject.title}" by ${blogObject.author}`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000);
       })
   }
 
@@ -154,6 +174,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={notification} state={notificationState}/>
       {!user && loginForm()}
       {user && <div>
           {userInfo()}
@@ -161,32 +182,6 @@ const App = () => {
           {blogsForm()}
         </div>
       }
-      {/* <h2>login to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            type="text"
-            value={password}
-            name="Username"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-      <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )} */}
     </div>
   )
 }
