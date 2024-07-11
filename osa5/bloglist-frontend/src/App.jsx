@@ -11,9 +11,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [blogTitle, setBlogTitle] = useState('')
-  const [blogAuthor, setBlogAuthor] = useState('')
-  const [blogUrl, setBlogUrl] = useState('')
   const [notification, setNotification] = useState(null)
   const [notificationState, setNotificationState] = useState(0)
 
@@ -69,28 +66,15 @@ const App = () => {
       }, 5000);
   }
 
-  const resetNewBlog = () => {
-    setBlogTitle('')
-    setBlogAuthor('')
-    setBlogUrl('')
-  }
-
-  const handleCreateBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: blogTitle,
-      author: blogAuthor,
-      url: blogUrl
-    }
-   createBlogRef.current.toggleVisibility()
+  const handleCreateBlog = (blogObject) => {
+    createBlogRef.current.toggleVisibility()
     blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        resetNewBlog()
         setNotification(`Successfully added blog "${blogObject.title}" by ${blogObject.author}`)
         setTimeout(() => {
-          setNotification(null)
+            setNotification(null)
         }, 5000);
       })
   }
@@ -148,15 +132,7 @@ const App = () => {
       {user && <div>
           {userInfo()}
           <Togglable buttonLabel='new blog' ref={createBlogRef}>
-            <CreateBlog 
-              title={blogTitle}
-              author={blogAuthor}
-              url={blogUrl}
-              handleTitleChange={({ target }) => setBlogTitle(target.value)}
-              handleAuthorChange={({ target }) => setBlogAuthor(target.value)}
-              handleUrlChange={({ target }) => setBlogUrl(target.value)}
-              handleSubmit={handleCreateBlog}
-            />
+            <CreateBlog handleNewBlog={handleCreateBlog}/>
           </Togglable>
           {/* {createBlog()} */}
           {blogsForm()}
