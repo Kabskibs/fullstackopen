@@ -127,19 +127,22 @@ const App = () => {
     </div>
   )
 
-  const blogsForm = () => (
-    <div>
-      <br></br>
-      {blogs.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          user={user}
-          handleAddLikes={handleAddLikes}
-        />
-      )}
-    </div>
-  )
+  const blogsForm = () => {
+    const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+    return (
+      <div>
+        <br></br>
+        {sortedBlogs.map(blog =>
+          <Blog
+            key={blog.id}
+            blog={blog}
+            user={user}
+            handleAddLikes={handleAddLikes}
+          />
+        )}
+      </div>
+    )
+  }
 
   const createBlogRef = useRef()
 
