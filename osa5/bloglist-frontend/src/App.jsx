@@ -77,7 +77,9 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
+        console.log(returnedBlog)
         setBlogs(blogs.concat(returnedBlog))
+        refreshBlogs()
         setNotification(`Successfully added blog "${blogObject.title}" by ${blogObject.author}`)
         setTimeout(() => {
             setNotification(null)
@@ -151,7 +153,6 @@ const App = () => {
           <Togglable buttonLabel='new blog' ref={createBlogRef}>
             <CreateBlog handleNewBlog={handleCreateBlog}/>
           </Togglable>
-          {/* {createBlog()} */}
           {blogsForm()}
         </div>
       }

@@ -1,10 +1,7 @@
 import { useState } from "react"
 
 const CreateBlog = ({
-    handleNewBlog,
-    title,
-    author,
-    url
+    handleNewBlog
 }) => {
     
     const [blogTitle, setBlogTitle] = useState('')
@@ -35,7 +32,7 @@ const CreateBlog = ({
                     title:
                     <input
                         type="text"
-                        value={title}
+                        value={blogTitle}
                         name="blogTitle"
                         onChange={event => setBlogTitle(event.target.value)}
                     />
@@ -44,7 +41,7 @@ const CreateBlog = ({
                     author:
                     <input
                         type="text"
-                        value={author}
+                        value={blogAuthor}
                         name="blogAuthor"
                         onChange={event => setBlogAuthor(event.target.value)}
                     />
@@ -53,7 +50,7 @@ const CreateBlog = ({
                     URL:
                     <input
                         type="text"
-                        value={url}
+                        value={blogUrl}
                         name="blogUrl"
                         onChange={event => setBlogUrl(event.target.value)}
                     />
