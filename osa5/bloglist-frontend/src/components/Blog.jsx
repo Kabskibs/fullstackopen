@@ -1,6 +1,11 @@
 import { useState } from "react"
 
-const Blog = ({ blog, handleAddLikes }) => {
+const Blog = ({
+  blog,
+  user,
+  handleAddLikes,
+  handleRemoveBlog
+}) => {
   const [collapsed, setCollapse] = useState(true)
 
   const addLikes = (event) => {
@@ -15,21 +20,50 @@ const Blog = ({ blog, handleAddLikes }) => {
     })
   }
 
+  const removeBlog = (event) => {
+    event.preventDefault()
+    handleRemoveBlog({
+      id: blog.id,
+      title: blog.title,
+      author: blog.author
+    })
+
+  }
+
   return (
     <div className="blogPostBox">
       {collapsed ? (
         <>
-          <>{blog.title} {blog.author}</>
+          <>
+            {blog.title} {blog.author}
+          </>
           <button onClick={ () => setCollapse(!collapsed) }>view</button>
         </>
       ) : (
         <>
-          <>{blog.title} {blog.author}
+          <>
+            {blog.title} {blog.author}
             <button onClick={ () => setCollapse(!collapsed) }>hide</button><br></br>
           </>
-          {blog.url}<br></br>
-          <>likes {blog.likes} <button onClick={addLikes}>like</button><br></br></>
-          {blog.user.name}
+          <>
+            {blog.url}<br></br>
+          </>
+          <>
+            likes {blog.likes}
+            <button onClick={addLikes}>like</button><br></br>
+          </>
+          <>
+            {blog.user.name}<br></br>
+          </>
+          <>
+            {blog.user.username === user.username ? (
+              <>
+                <button onClick={removeBlog}>remove</button><br></br>
+              </>
+            ) : (
+              <></>
+            )}
+          </>
         </>
       )}
     </div>

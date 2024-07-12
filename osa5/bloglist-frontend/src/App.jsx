@@ -93,6 +93,19 @@ const App = () => {
       .then(refreshBlogs)
   }
 
+  const handleRemoveBlog = (blogObject) => {
+    const confirm = window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}`)
+    if (confirm) {
+      blogService
+        .remove(blogObject)
+        .then(refreshBlogs)
+        setNotification(`Successfully removed blog`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000);
+    }
+  }
+
   const loginForm = () => (
     <div>
       <h2>login to application</h2>
@@ -138,6 +151,7 @@ const App = () => {
             blog={blog}
             user={user}
             handleAddLikes={handleAddLikes}
+            handleRemoveBlog={handleRemoveBlog}
           />
         )}
       </div>
