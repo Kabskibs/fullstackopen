@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({
   blog,
@@ -7,7 +8,6 @@ const Blog = ({
   handleRemoveBlog
 }) => {
   const [collapsed, setCollapse] = useState(true)
-
   const addLikes = (event) => {
     event.preventDefault()
     handleAddLikes({
@@ -19,7 +19,6 @@ const Blog = ({
       id: blog.id
     })
   }
-
   const removeBlog = (event) => {
     event.preventDefault()
     handleRemoveBlog({
@@ -27,9 +26,7 @@ const Blog = ({
       title: blog.title,
       author: blog.author
     })
-
   }
-
   return (
     <div className="blogPostBox">
       {collapsed ? (
@@ -68,6 +65,13 @@ const Blog = ({
       )}
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  handleAddLikes: PropTypes.func.isRequired,
+  handleRemoveBlog: PropTypes.func.isRequired
 }
 
 export default Blog
