@@ -32,6 +32,7 @@ const CreateBlog = ({
             value={blogTitle}
             name="blogTitle"
             onChange={event => setBlogTitle(event.target.value)}
+            placeholder='blog title'
           />
         </div>
         <div>
@@ -41,6 +42,7 @@ const CreateBlog = ({
             value={blogAuthor}
             name="blogAuthor"
             onChange={event => setBlogAuthor(event.target.value)}
+            placeholder='blog author'
           />
         </div>
         <div>
@@ -50,6 +52,7 @@ const CreateBlog = ({
             value={blogUrl}
             name="blogUrl"
             onChange={event => setBlogUrl(event.target.value)}
+            placeholder='blog url'
           />
         </div>
         <button type="submit">create</button>
