@@ -22,4 +22,21 @@ describe('Blog app', () => {
     await expect(page.locator('input[type="password"]')).toBeVisible();
     await expect(page.getByRole('button', { name: 'login' })).toBeVisible();
   })
+
+  describe('Login', () => {
+    test('succeeds with correct credentials', async ({ page }) => {
+      await page.getByTestId('username').fill('test_user1')
+      await page.getByTestId('password').fill('test_password')
+      await page.getByRole('button', { name: 'login' }).click()
+      await expect(page.getByText('Test User logged in')).toBeVisible()
+    })
+
+    test('fails with wrong credentials', async ({ page }) => {
+      await page.getByTestId('username').fill('wrong_user')
+      await page.getByTestId('password').fill('wrong_password')
+      await page.getByRole('button', { name: 'login' }).click()
+      await expect(page.getByText('Wrong username or password')).toBeVisible()
+    })
+  })
+
 })
