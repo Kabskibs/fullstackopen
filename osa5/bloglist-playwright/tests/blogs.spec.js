@@ -11,6 +11,13 @@ describe('Blog app', () => {
         password: 'test_password'
       }
     })
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: 'Test User 2',
+        username: 'test_user2',
+        password: 'test_password'
+      }
+    })
 
     await page.goto('http://localhost:5173')
   })
@@ -48,7 +55,7 @@ describe('Blog app', () => {
       await expect(page.getByText('likes 1')).toBeVisible()
     })
 
-    test.only('Logged in user can remove their own post', async ({ page }) => {
+    test('Logged in user can remove their own post', async ({ page }) => {
       loginWith(page, 'test_user1', 'test_password')
       createBlog(page, 'Blog Title', 'Author Name', 'blog.url')
       await page.getByRole('button', { name: 'view' }).click()
@@ -57,6 +64,16 @@ describe('Blog app', () => {
       await expect(page.getByText('Successfully removed blog')).toBeVisible()
       await page.reload()
       await expect(page.getByText('Blog Title Author Name')).not.toBeVisible()
+    })
+
+    test('Logged in user cannot remove other users post', async ({ page }) => {
+      await loginWith(page, 'test_user1', 'test_password')
+      await createBlog(page, 'Blog Title', 'Author Name', 'blog.url')
+      await page.getByRole('button', { name: 'logout' }).click()
+      await expect(page.getByText('login to application')).toBeVisible()
+      await loginWith(page, 'test_user2', 'test_password')
+      await page.getByRole('button', { name: 'view' }).click()
+      await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
     })
   })
 })
