@@ -47,5 +47,16 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'like' }).click()
       await expect(page.getByText('likes 1')).toBeVisible()
     })
+
+    test.only('Logged in user can remove their own post', async ({ page }) => {
+      loginWith(page, 'test_user1', 'test_password')
+      createBlog(page, 'Blog Title', 'Author Name', 'blog.url')
+      await page.getByRole('button', { name: 'view' }).click()
+      await page.on('dialog', dialog => dialog.accept())
+      await page.getByRole('button', { name: 'remove' }).click()
+      await expect(page.getByText('Successfully removed blog')).toBeVisible()
+      await page.reload()
+      await expect(page.getByText('Blog Title Author Name')).not.toBeVisible()
+    })
   })
 })
