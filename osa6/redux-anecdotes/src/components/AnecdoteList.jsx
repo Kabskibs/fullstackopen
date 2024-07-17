@@ -5,10 +5,14 @@ const AnecdoteList = () => {
   const dispatch = useDispatch()
 
   const anecdotes = useSelector(({ anecdotes, filter }) => {
+    // These both work. Has to be used, since anecdotes is immutable
+    // and filter mutates given array
+    // const anecdotesToFilter = [...anecdotes]
+    const anecdotesToFilter = anecdotes.toSorted()
     if (filter === '') {
-      return anecdotes
+      return anecdotesToFilter
     } else {
-      const filteredAnecdotes = anecdotes.filter(p => {
+      const filteredAnecdotes = anecdotesToFilter.filter(p => {
         if (p.content.toLowerCase().includes(filter.toLowerCase())) {
           return p
         }
@@ -21,7 +25,6 @@ const AnecdoteList = () => {
     console.log('vote', id)
     dispatch(addVote(id))
   }
-
   const sortedAnecdotes = anecdotes.sort((a, b) => b.votes - a.votes)
 
   return (
