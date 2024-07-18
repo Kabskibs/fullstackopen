@@ -9,7 +9,7 @@ import { createSlice } from '@reduxjs/toolkit'
   'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
 ] */
 
-const getId = () => (100000 * Math.random()).toFixed(0)
+// const getId = () => (100000 * Math.random()).toFixed(0)
 
 /* const asObject = (anecdote) => {
   return {
@@ -35,21 +35,13 @@ const anecdoteSlice = createSlice({
       return state.map(a => a.id !== id ? a : changedAnecdote)
     },
     addAnecdote(state, action) {
-      const content = action.payload
-      state.push({
-        content,
-        id: getId(),
-        votes: 0
-      })
+      state.push(action.payload)
     },
     setAnecdotes(state, action) {
       return action.payload
-    },
-    appendAnecdote(state, action) {
-      state.push(action.payload)
     }
   },
 })
 
-export const { addVote, addAnecdote, setAnecdotes, appendAnecdote } = anecdoteSlice.actions
+export const { addVote, addAnecdote, setAnecdotes } = anecdoteSlice.actions
 export default anecdoteSlice.reducer
