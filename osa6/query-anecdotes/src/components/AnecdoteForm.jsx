@@ -13,17 +13,32 @@ const AnecdoteForm = () => {
     mutationFn: createAnecdote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+    },
+    onError: () => {
+      setErrorNotification()
     }
   })
 
   const setNotification = message => {
+    if (message.length > 4) {
+      dispatch({
+        type: "SET_NOTIFICATION",
+        message: `anecdote '${message}' created`
+      })
+      setTimeout(() => {
+        dispatch({ type: "NULL_NOTIFICATION" })
+      }, 5000)
+    }
+  }
+
+  const setErrorNotification = () => {
     dispatch({
       type: "SET_NOTIFICATION",
-      message: `anecdote '${message}' created`
+      message: "anecdote must be at least 5 characters long"
     })
     setTimeout(() => {
       dispatch({ type: "NULL_NOTIFICATION" })
-    }, 5000)
+    }, 5000);
   }
 
   const onCreate = async (event) => {
