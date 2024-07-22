@@ -1,9 +1,8 @@
 import { useState } from 'react'
 
 import {
-  BrowserRouter as Router,
   Routes, Route, Link,
-  useParams
+  useParams, useNavigate
 } from 'react-router-dom'
 
 const Menu = ({ anecdotes, addNew }) => {
@@ -11,20 +10,13 @@ const Menu = ({ anecdotes, addNew }) => {
     paddingRight: 5
   }
   return (
-    <Router>
+    <>
       <div>
         <Link style={padding} to={'/'}>anecdotes</Link>
         <Link style={padding} to={'/create'}>create new</Link>
         <Link style={padding} to={'/about'}>about</Link>
       </div>
-
-      <Routes>
-        <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />}></Route>
-        <Route path='/anecdotes/:id' element={<Anecdote anecdotes={anecdotes} />}></Route>
-        <Route path='/create' element={<CreateNew addNew={addNew} />}></Route>
-        <Route path='/about' element={<About />}></Route>
-      </Routes>
-    </Router>
+    </>
   )
 }
 
@@ -79,7 +71,6 @@ const CreateNew = (props) => {
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
-
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
@@ -89,7 +80,6 @@ const CreateNew = (props) => {
       votes: 0
     })
   }
-
   return (
     <div>
       <h2>create a new anecdote</h2>
@@ -110,7 +100,16 @@ const CreateNew = (props) => {
       </form>
     </div>
   )
+}
 
+const Notification = ({ message }) => {
+  if (message !== '') {
+    return (
+      <>
+        a new anecdote {message} created!
+      </>
+    )
+  }
 }
 
 const App = () => {
@@ -133,9 +132,21 @@ const App = () => {
 
   const [notification, setNotification] = useState('')
 
+  const navigate = useNavigate()
+
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    toggleNotification(anecdote.content)
+    navigate("/")
+    
+  }
+
+  const toggleNotification = (content) => {
+    setNotification(content)
+    setTimeout(() => {
+      setNotification('')
+    }, 5000);
   }
 
   const anecdoteById = (id) =>
@@ -156,6 +167,13 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu anecdotes={anecdotes} addNew={addNew}/>
+      <Notification message={notification}/>
+      <Routes>
+        <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />}></Route>
+        <Route path='/anecdotes/:id' element={<Anecdote anecdotes={anecdotes} />}></Route>
+        <Route path='/create' element={<CreateNew addNew={addNew} />}></Route>
+        <Route path='/about' element={<About />}></Route>
+      </Routes>
       <Footer />
     </div>
   )
