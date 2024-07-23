@@ -21,10 +21,10 @@ const useCountry = (name) => {
   const [country, setCountry] = useState(null)
 
   useEffect(() => {
-    if (name !== '') {
+    if (name !== null) {
         getCountry(name).then(response => {
           setCountry({ found: true, data: response })
-        }).catch(error => {
+        }).catch (error => {
           if (error.response.status === 404) {
             setCountry({ found: false })
           }
