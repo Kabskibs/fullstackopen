@@ -18,13 +18,10 @@ const useField = (type) => {
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  console.log('BUrl', baseUrl)
-
   useEffect(() => {
     requestService
       .getAll(baseUrl)
       .then(response => {
-        console.log('Res', response)
         setResources(response)
       })
   }, [baseUrl])
@@ -33,7 +30,6 @@ const useResource = (baseUrl) => {
     requestService
       .create(baseUrl, resource)
       .then(response => {
-        console.log(response)
         setResources(resources.concat(response))
       })
   }
@@ -54,9 +50,6 @@ const App = () => {
 
   const [notes, noteService] = useResource('http://localhost:3005/notes')
   const [persons, personService] = useResource('http://localhost:3005/persons')
-
-  console.log('Notes', notes)
-  console.log('Pers', persons)
 
   const handleNoteSubmit = (event) => {
     event.preventDefault()
