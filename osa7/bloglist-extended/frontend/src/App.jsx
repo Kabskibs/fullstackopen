@@ -1,18 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
-import Blog from './components/Blog';
-import Notification from './components/Notification';
+import { useDispatch } from 'react-redux';
+
 import blogService from './services/blogs';
 import loginService from './services/login';
+
+import Blog from './components/Blog';
+import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import CreateBlog from './components/CreateBlog';
 
+import { setNotification } from './reducers/notificationReducer';
+import { setNotificationStateError } from './reducers/notificationStateReducer';
+
 const App = () => {
+  const dispatch = useDispatch();
+
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState(null);
-  const [notificationState, setNotificationState] = useState(0);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -43,17 +49,10 @@ const App = () => {
       setUser(user);
       setUsername('');
       setPassword('');
-      setNotification(`Logged in as ${user.username}`);
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(setNotification(`Logged in as ${user.username}`, 5));
     } catch (exception) {
-      setNotificationState(-1);
-      setNotification('Wrong username or password');
-      setTimeout(() => {
-        setNotification(null);
-        setNotificationState(0);
-      }, 5000);
+      dispatch(setNotificationStateError(5));
+      dispatch(setNotification('Wrong username or password', 5));
     }
   };
 
@@ -61,10 +60,7 @@ const App = () => {
     event.preventDefault();
     setUser(null);
     window.localStorage.removeItem('loggedBlogUser');
-    setNotification('Logged out');
-    setTimeout(() => {
-      setNotification(null);
-    }, 5000);
+    dispatch(setNotification(`Logged out!`, 5));
   };
 
   const handleCreateBlog = (blogObject) => {
@@ -73,12 +69,12 @@ const App = () => {
       console.log(returnedBlog);
       setBlogs(blogs.concat(returnedBlog));
       refreshBlogs();
-      setNotification(
-        `Successfully added blog "${blogObject.title}" by ${blogObject.author}`,
+      dispatch(
+        setNotification(
+          `Successfully added blog "${blogObject.title}" by ${blogObject.author}`,
+          5,
+        ),
       );
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
     });
   };
 
@@ -92,10 +88,7 @@ const App = () => {
     );
     if (confirm) {
       blogService.remove(blogObject).then(refreshBlogs);
-      setNotification('Successfully removed blog');
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(setNotification('Successfully removed blog', 5));
     }
   };
 
@@ -156,7 +149,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={notification} state={notificationState} />
+      <Notification />
       {!user && loginForm()}
       {user && (
         <div>
