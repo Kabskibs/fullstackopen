@@ -7,13 +7,16 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "test": "cross-env NODE_ENV=test node --test",
-    "test:only": "cross-env NODE_ENV=test node --test --test-only"
+    "test:only": "cross-env NODE_ENV=test node --test --test-only",
+    "prettier": "npx prettier . --write",
+    "prettier:check": "npx prettier . --check"
   },
   "author": "Kalle Vesanterä",
   "license": "ISC",
   "devDependencies": {
     "cross-env": "^7.0.3",
     "nodemon": "^3.1.4",
+    "prettier": "3.3.3",
     "supertest": "^7.0.0"
   },
   "dependencies": {

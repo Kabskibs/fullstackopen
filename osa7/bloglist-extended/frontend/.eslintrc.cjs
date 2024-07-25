@@ -3,7 +3,7 @@ module.exports = {
   env: {
     browser: true,
     es2020: true,
-    "vitest-globals/env": true
+    'vitest-globals/env': true,
   },
   extends: [
     'eslint:recommended',
@@ -11,40 +11,43 @@ module.exports = {
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
     'plugin:vitest-globals/recommended',
+    'prettier',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },
   plugins: ['react-refresh'],
   rules: {
-    "indent": [
+    // Commented rules are ones that are unnecessary or conflict with Prettier.
+    // They can be uncommented, if not using Prettier
+    /* "indent": [
         "error",
         2  
-    ],
-    "linebreak-style": [
+    ], */
+    /* "linebreak-style": [
         "error",
         "unix"
-    ],
-    "quotes": [
+    ], */
+    /* "quotes": [
         "error",
         "single"
-    ],
-    "semi": [
+    ], */
+    /* "semi": [
         "error",
         "never"
-    ],
-    "eqeqeq": "error",
-    "no-trailing-spaces": "error",
-    "object-curly-spacing": [
+    ], */
+    eqeqeq: 'error',
+    /* "no-trailing-spaces": "error", */
+    /* "object-curly-spacing": [
         "error", "always"
-    ],
-    "arrow-spacing": [
+    ], */
+    /* "arrow-spacing": [
         "error", { "before": true, "after": true }
-    ],
-    "no-console": 0,
-    "react/prop-types": 0,
-    "react/react-in-jsx-scope": "off",
-    "react/prop-types": 0,
-    "no-unused-vars": 0
+    ], */
+    'no-console': 0,
+    'react/prop-types': 0,
+    'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 0,
+    'no-unused-vars': 0,
   },
-}
+};
