@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 const Notification = () => {
@@ -16,11 +15,6 @@ const Notification = () => {
   } else {
     return <div className='notificationError'>{message}</div>;
   }
-};
-
-Notification.propTypes = {
-  message: PropTypes.string,
-  state: PropTypes.number.isRequired,
 };
 
 export default Notification;
