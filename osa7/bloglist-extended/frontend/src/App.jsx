@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -11,18 +11,24 @@ import CreateBlog from './components/CreateBlog';
 
 import { setNotification } from './reducers/notificationReducer';
 import { setNotificationStateError } from './reducers/notificationStateReducer';
+import { initializeBlogs, newBlog } from './reducers/blogsReducer';
 
 const App = () => {
   const dispatch = useDispatch();
 
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector(({ blogs }) => {
+    // Original blogs is immutable, therefore need to return
+    // via toSorted()
+    return blogs.toSorted();
+  });
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogUser');
@@ -34,7 +40,7 @@ const App = () => {
   }, []);
 
   const refreshBlogs = () => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    dispatch(initializeBlogs());
   };
 
   const handleLogin = async (event) => {
@@ -65,17 +71,8 @@ const App = () => {
 
   const handleCreateBlog = (blogObject) => {
     createBlogRef.current.toggleVisibility();
-    blogService.create(blogObject).then((returnedBlog) => {
-      console.log(returnedBlog);
-      setBlogs(blogs.concat(returnedBlog));
-      refreshBlogs();
-      dispatch(
-        setNotification(
-          `Successfully added blog "${blogObject.title}" by ${blogObject.author}`,
-          5,
-        ),
-      );
-    });
+    dispatch(newBlog(blogObject));
+    refreshBlogs();
   };
 
   const handleAddLikes = (blogObject) => {
@@ -127,7 +124,9 @@ const App = () => {
   );
 
   const blogsForm = () => {
+    console.log('BLOGS: ', blogs);
     const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
+    console.log('SB: ', sortedBlogs);
     return (
       <div>
         <br></br>
