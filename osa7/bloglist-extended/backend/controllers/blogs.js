@@ -42,7 +42,7 @@ blogsRouter.put('/:id', async (request, response) => {
       { new: true, runValidators: true, context: 'query' },
     );
     if (updatedBlog) {
-      response.status(201).end();
+      response.status(201).json(updatedBlog).end();
     } else {
       response.status(404).end();
     }

@@ -11,7 +11,12 @@ import CreateBlog from './components/CreateBlog';
 
 import { setNotification } from './reducers/notificationReducer';
 import { setNotificationStateError } from './reducers/notificationStateReducer';
-import { initializeBlogs, newBlog } from './reducers/blogsReducer';
+import {
+  initializeBlogs,
+  newBlog,
+  addVote,
+  deleteBlog,
+} from './reducers/blogsReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -40,7 +45,11 @@ const App = () => {
   }, []);
 
   const refreshBlogs = () => {
-    dispatch(initializeBlogs());
+    // This is stupid, but works as a workaround for broken refresh
+    // (also refreshing this way is kind of stupid)
+    setTimeout(() => {
+      dispatch(initializeBlogs());
+    }, 10);
   };
 
   const handleLogin = async (event) => {
@@ -72,11 +81,16 @@ const App = () => {
   const handleCreateBlog = (blogObject) => {
     createBlogRef.current.toggleVisibility();
     dispatch(newBlog(blogObject));
+    dispatch(
+      setNotification(`Successfully created blog '${blogObject.title}'`, 5),
+    );
     refreshBlogs();
   };
 
   const handleAddLikes = (blogObject) => {
-    blogService.update(blogObject).then(refreshBlogs);
+    dispatch(addVote(blogObject));
+    dispatch(setNotification(`Blog deleted!`, 5));
+    refreshBlogs();
   };
 
   const handleRemoveBlog = (blogObject) => {
@@ -84,8 +98,9 @@ const App = () => {
       `Remove blog ${blogObject.title} by ${blogObject.author}`,
     );
     if (confirm) {
-      blogService.remove(blogObject).then(refreshBlogs);
+      dispatch(deleteBlog(blogObject));
       dispatch(setNotification('Successfully removed blog', 5));
+      refreshBlogs();
     }
   };
 
