@@ -1,0 +1,21 @@
+{
+  "name": "library-backend",
+  "version": "0.0.1",
+  "description": "Fullstackopen GraphQL Part8 Backend",
+  "main": "library-backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node library-backend.js",
+    "dev": "nodemon library-backend.js"
+  },
+  "author": "Kalle Vesanterä",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.10.5",
+    "graphql": "^16.9.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
