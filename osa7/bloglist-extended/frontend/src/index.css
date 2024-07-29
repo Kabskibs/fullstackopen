@@ -25,3 +25,27 @@
   border-width: 1px;
   margin-bottom: 5px;
 }
+
+.divUserTable {
+  display: table;
+  width: 250px;
+}
+.divUserTableRow {
+  display: table-row;
+}
+.divUserTableHeading {
+  display: table-header-group;
+}
+.divUserTableCellLeft {
+  display: table-cell;
+}
+.divUserTableCellRight {
+  display: table-cell;
+}
+.divUserTableHead {
+  display: table-cell;
+  font-weight: 900;
+}
+.divUserTableBody {
+  display: table-row-group;
+}

@@ -8,6 +8,7 @@ import App from './App';
 import notificationReducer from './reducers/notificationReducer';
 import notificationStateReducer from './reducers/notificationStateReducer';
 import blogsReducer from './reducers/blogsReducer';
+import usersReducer from './reducers/usersReducer';
 
 import './index.css';
 
@@ -16,6 +17,7 @@ const store = configureStore({
     notification: notificationReducer,
     notificationState: notificationStateReducer,
     blogs: blogsReducer,
+    users: usersReducer,
   },
 });
 

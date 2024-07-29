@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { BrowserRouter as Router, Routes, Link, Route } from 'react-router-dom';
 
 import blogService from './services/blogs';
 import loginService from './services/login';
 
+import UserInfo from './components/UserInfo';
 import Blog from './components/Blog';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import CreateBlog from './components/CreateBlog';
+import UserList from './components/UserList';
 
 import { setNotification } from './reducers/notificationReducer';
 import { setNotificationStateError } from './reducers/notificationStateReducer';
@@ -17,6 +20,7 @@ import {
   addVote,
   deleteBlog,
 } from './reducers/blogsReducer';
+import { initializeUsers } from './reducers/usersReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -26,6 +30,10 @@ const App = () => {
     // via toSorted()
     return blogs.toSorted();
   });
+
+  useEffect(() => {
+    dispatch(initializeUsers());
+  }, []);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -45,7 +53,7 @@ const App = () => {
   }, []);
 
   const refreshBlogs = () => {
-    // This is stupid, but works as a workaround for broken refresh
+    // This is stupid, but timeout works as a workaround for broken refresh
     // (also refreshing this way is kind of stupid)
     setTimeout(() => {
       dispatch(initializeBlogs());
@@ -89,7 +97,6 @@ const App = () => {
 
   const handleAddLikes = (blogObject) => {
     dispatch(addVote(blogObject));
-    dispatch(setNotification(`Blog deleted!`, 5));
     refreshBlogs();
   };
 
@@ -131,13 +138,6 @@ const App = () => {
     </div>
   );
 
-  const userInfo = () => (
-    <div>
-      {user.name} logged in
-      <button onClick={handleLogout}>logout</button>
-    </div>
-  );
-
   const blogsForm = () => {
     console.log('BLOGS: ', blogs);
     const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
@@ -158,13 +158,51 @@ const App = () => {
     );
   };
 
+  const MainContent = () => {
+    return (
+      <div>
+        {user && (
+          <div>
+            <UserInfo user={user} logout={handleLogout} />
+            <Togglable buttonLabel='new blog' ref={createBlogRef}>
+              <CreateBlog handleNewBlog={handleCreateBlog} />
+            </Togglable>
+            {blogsForm()}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const UsersContent = () => {
+    return (
+      <div>
+        {user && (
+          <div>
+            <UserInfo user={user} logout={handleLogout} />
+            <UserList />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const createBlogRef = useRef();
 
   return (
     <div>
       <h2>blogs</h2>
+
       <Notification />
       {!user && loginForm()}
+      <Router>
+        <Routes>
+          <Route path='/users' element={<UsersContent />} />
+          <Route path='/' element={<MainContent />} />
+        </Routes>
+      </Router>
+      {/* <MainContent /> */}
+      {/* {!user && loginForm()}
       {user && (
         <div>
           {userInfo()}
@@ -173,7 +211,7 @@ const App = () => {
           </Togglable>
           {blogsForm()}
         </div>
-      )}
+      )} */}
     </div>
   );
 };
