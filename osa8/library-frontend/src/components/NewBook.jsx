@@ -6,7 +6,7 @@ import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from "../queries";
 const NewBook = (props) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
-  const [published, setPublished] = useState(NaN);
+  const [published, setPublished] = useState("");
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
 
@@ -25,7 +25,7 @@ const NewBook = (props) => {
     createBook({ variables: { title, author, published, genres } });
 
     setTitle("");
-    setPublished(NaN);
+    setPublished("");
     setAuthor("");
     setGenres([]);
     setGenre("");
