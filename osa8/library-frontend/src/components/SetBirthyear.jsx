@@ -1,9 +1,9 @@
 import { useMutation } from "@apollo/client";
 
 import { ADD_BIRTHYEAR } from "../queries";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
-const SetBirthyear = () => {
+const SetBirthyear = ({ authors }) => {
   const [name, setName] = useState("");
   const [born, setBorn] = useState("");
 
@@ -12,25 +12,40 @@ const SetBirthyear = () => {
   const submit = async (event) => {
     event.preventDefault();
 
-    console.log(name, born);
-
     addBirthyear({ variables: { name, setBornTo: born } });
 
+    nameSelect.current.value = "";
     setName("");
     setBorn("");
+  };
+
+  const nameSelect = useRef();
+
+  const selectName = () => {
+    const names = authors.data.allAuthors.map((author) => author.name);
+    return (
+      <div>
+        name
+        <select
+          ref={nameSelect}
+          onChange={({ target }) => setName(target.value)}
+        >
+          <option></option>
+          {names.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
   };
 
   return (
     <div>
       <h3>Set birthyear</h3>
       <form onSubmit={submit}>
-        <div>
-          name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
-        </div>
+        <div>{selectName()}</div>
         <div>
           born
           <input
