@@ -11,6 +11,7 @@ const Books = (props) => {
   const booksByGenre = useQuery(BOOKS_BY_GENRE, {
     variables: { genre },
     skip: genre === "all",
+    fetchPolicy: "cache-and-network",
   });
 
   useEffect(() => {
@@ -31,8 +32,6 @@ const Books = (props) => {
       </div>
     );
   }
-
-  console.log(genre);
 
   const selectGenre = () => {
     return (
