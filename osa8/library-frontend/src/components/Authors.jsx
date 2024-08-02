@@ -4,14 +4,14 @@ import SetBirthyear from "./SetBirthyear";
 
 import { ALL_AUTHORS } from "../queries";
 
-const Authors = (props) => {
+const Authors = ({ show, token }) => {
   const authors = useQuery(ALL_AUTHORS);
 
   if (authors.loading) {
     return <div>loading data...</div>;
   }
 
-  if (!props.show) {
+  if (!show) {
     return null;
   }
 
@@ -34,7 +34,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <SetBirthyear authors={authors} />
+      {token ? <SetBirthyear authors={authors} /> : <></>}
     </div>
   );
 };
