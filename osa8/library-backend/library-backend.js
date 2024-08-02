@@ -53,7 +53,7 @@ const typeDefs = `
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
-    me: User
+    me: [User]
   }
 
   type Mutation {
@@ -107,6 +107,17 @@ const resolvers = {
     },
     allAuthors: async (root, args) => {
       return await Author.find({});
+    },
+    me: async (root, args, context) => {
+      const currentUser = context.currentUser;
+      if (!currentUser) {
+        throw new GraphQLError("Not authenticated!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
+      return await User.find({ username: context.currentUser.username });
     },
   },
   Author: {

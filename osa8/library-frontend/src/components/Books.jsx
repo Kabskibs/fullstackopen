@@ -15,7 +15,7 @@ const Books = (props) => {
   });
 
   useEffect(() => {
-    if (!books.loading) {
+    if (books.data) {
       const genresMapped = books.data.allBooks.map((a) => a.genres);
       const genreArray = [...new Set(genresMapped.flat())];
       setAllGenres(genreArray);
