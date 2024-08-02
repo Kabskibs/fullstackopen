@@ -1,6 +1,6 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
-const { GraphQLError, graphql } = require("graphql");
+const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
 
 const mongoose = require("mongoose");
@@ -88,28 +88,30 @@ const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
-    /* allBooks: (root, args) => {
-      if (!args.author && !args.genre) {
-        return books;
-      } else if (args.author && !args.genre) {
-        return books.filter((book) => book.author === args.author);
-      } else if (!args.author && args.genre) {
-        return books.filter((book) => book.genres.includes(args.genre));
-      } else {
-        const byAuthor = books.filter((book) => book.author === args.author);
-        return byAuthor.filter((book) => book.genres.includes(args.genre));
-      }
-    }, */
     allBooks: async (root, args) => {
+      const author = await Author.findOne({ name: args.author });
       if (!args.author && !args.genre) {
-        return Book.find({});
+        return Book.find({}).populate("author");
       } else if (!args.author && args.genre) {
-        return Book.find({ genres: args.genre });
+        return Book.find({ genres: args.genre }).populate("author");
+      } else if (args.author && !args.genre) {
+        if (!author) {
+          return [];
+        }
+        return Book.find({ author: author._id }).populate("author");
+      } else {
+        return Book.find({ author: author._id, genres: args.genre }).populate(
+          "author"
+        );
       }
     },
     allAuthors: async (root, args) => {
       return await Author.find({});
     },
+  },
+  Author: {
+    bookCount: async (root, args) =>
+      Book.find({ author: root.id }).countDocuments(),
   },
   Mutation: {
     addBook: async (root, args, context) => {
