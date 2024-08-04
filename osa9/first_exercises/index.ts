@@ -28,10 +28,10 @@ app.post('/exercises', (req, res) => {
     res.status(400).send({ error: 'malformatted parameters' }).end();
   } else {
     try {
-      res.send(calculateExercises(exerciseArray, target))
+      res.send(calculateExercises(exerciseArray, target));
     } catch (error) {
-      console.log('Error', error.message)
-      res.status(500).send({ error: 'Something went wrong.' })
+      console.log('Error', error.message);
+      res.status(500).send({ error: 'Something went wrong.' });
     }
   }
 })
