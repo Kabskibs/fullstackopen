@@ -14,11 +14,16 @@ interface ArgsValues {
 }
 
 const parseArguments = (args: string[]): ArgsValues => {
+  if (args.length < 4) throw new Error('Not enough arguments!'); 
   const target: number = Number(args[2]);
   const daysArray: number[] = (args.map(Number)).slice(3);
-  return {
-    daysArray,
-    target
+  if (!isNaN(target) && !daysArray.includes(NaN)) {
+    return {
+      daysArray,
+      target
+    }
+  } else {
+    throw new Error('All values must be numbers');
   }
 }
 
@@ -60,7 +65,7 @@ try {
   const { daysArray, target } = parseArguments(process.argv);
   console.log(calculateExercises(daysArray, target));
 } catch (error: unknown) {
-  let errorMessage = 'Something bad happened.';
+  let errorMessage = 'Something bad happened. ';
   if (error instanceof Error) {
     errorMessage += 'Error: ' + error.message;
   }
