@@ -6,7 +6,7 @@ const calculateBmi = (height: number, weight: number) => {
   } else if (bmi > 18.5 && bmi < 24.9) {
     console.log("Normal (healthy weight)");
   } else if (bmi > 24.9) {
-    console.log("Overweight (unhealthy weight)")
+    console.log("Overweight (unhealthy weight)");
   }
 }
 
