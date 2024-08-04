@@ -8,6 +8,20 @@ interface Result {
   average: number;
 }
 
+interface ArgsValues {
+  daysArray: number[],
+  target: number
+}
+
+const parseArguments = (args: string[]): ArgsValues => {
+  const target: number = Number(args[2]);
+  const daysArray: number[] = (args.map(Number)).slice(3);
+  return {
+    daysArray,
+    target
+  }
+}
+
 const calculateExercises = (hours: number[], target: number): Result => {
   const daysTotal: number = hours.length;
   const totalHours: number = hours.reduce((a, c) => a + c, 0);
@@ -42,4 +56,15 @@ const calculateExercises = (hours: number[], target: number): Result => {
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const { daysArray, target } = parseArguments(process.argv);
+  console.log(calculateExercises(daysArray, target));
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happened.';
+  if (error instanceof Error) {
+    errorMessage += 'Error: ' + error.message;
+  }
+  console.log(errorMessage);
+}
+
+export {};
