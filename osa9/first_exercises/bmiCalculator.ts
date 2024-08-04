@@ -16,15 +16,24 @@ const parseArguments = (args: string[]): Values => {
   }
 }
 
-const calculateBmi = (height: number, weight: number) => {
+export const calculateBmi = (height: number, weight: number) => {
   const heightToM: number = height / 100;
   const bmi: number = weight / (heightToM * heightToM);
+  let message: string = '';
   if (bmi < 18.5) {
-    console.log("Underweight");
+    message = 'Underweight';
+    console.log('Underweight');
   } else if (bmi > 18.5 && bmi < 24.9) {
-    console.log("Normal (healthy weight)");
+    message = 'Normal (healthy weight)';
+    console.log('Normal (healthy weight)');
   } else if (bmi > 24.9) {
-    console.log("Overweight");
+    message = 'Overweight';
+    console.log('Overweight');
+  }
+  return {
+    weight: weight,
+    height: height,
+    bmi: message,
   }
 }
 
