@@ -14,7 +14,7 @@ interface ArgsValues {
 }
 
 const parseArguments = (args: string[]): ArgsValues => {
-  if (args.length < 4) throw new Error('Not enough arguments!'); 
+  if (args.length < 4) throw new Error('Not enough arguments!');
   const target: number = Number(args[2]);
   const daysArray: number[] = (args.map(Number)).slice(3);
   if (!isNaN(target) && !daysArray.includes(NaN)) {
@@ -27,7 +27,7 @@ const parseArguments = (args: string[]): ArgsValues => {
   }
 }
 
-const calculateExercises = (hours: number[], target: number): Result => {
+export const calculateExercises = (hours: number[], target: number): Result => {
   const daysTotal: number = hours.length;
   const totalHours: number = hours.reduce((a, c) => a + c, 0);
   const trainingDays: number[] = hours.filter((a) => a > 0);
@@ -72,4 +72,4 @@ try {
   console.log(errorMessage);
 }
 
-export {};
+export { };
