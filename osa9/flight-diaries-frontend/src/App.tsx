@@ -82,19 +82,70 @@ const App = () => {
           <form onSubmit={addNewEntry}>
             date
             <input
+              type='date'
               value={newEntryDate}
               onChange={(event) => setNewEntryDate(event.target.value)}
             /><br></br>
-            visibility
-            <input
-              value={newEntryVisibility}
-              onChange={(event) => setNewEntryVisibility(event.target.value)}
-            /><br></br>
-            weather
-            <input
-              value={newEntryWeather}
-              onChange={(event) => setNewEntryWeather(event.target.value)}
-            /><br></br>
+            <div>
+              visibility
+              great
+              <input
+                type='radio'
+                name='visibility'
+                onChange={() => setNewEntryVisibility('great')}
+              />
+              good
+              <input
+                type='radio'
+                name='visibility'
+                onChange={() => setNewEntryVisibility('good')}
+              />
+              ok
+              <input
+                type='radio'
+                name='visibility'
+                onChange={() => setNewEntryVisibility('ok')}
+              />
+              poor
+              <input
+                type='radio'
+                name='visibility'
+                onChange={() => setNewEntryVisibility('poor')}
+              />
+            </div>
+            <div>
+              weather
+              sunny
+              <input
+                type='radio'
+                name='weather'
+                onChange={() => setNewEntryWeather('sunny')}
+              />
+              rainy
+              <input
+                type='radio'
+                name='weather'
+                onChange={() => setNewEntryWeather('rainy')}
+              />
+              cloudy
+              <input
+                type='radio'
+                name='weather'
+                onChange={() => setNewEntryWeather('cloudy')}
+              />
+              stormy
+              <input
+                type='radio'
+                name='weather'
+                onChange={() => setNewEntryWeather('stormy')}
+              />
+              windy
+              <input
+                type='radio'
+                name='weather'
+                onChange={() => setNewEntryWeather('windy')}
+              />
+            </div>
             comment
             <input
               value={newEntryComment}
