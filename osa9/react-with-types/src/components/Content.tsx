@@ -7,7 +7,7 @@ const Content = (props: Courses) => {
         <div>{p.name} {p.exerciseCount}</div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 export default Content;
