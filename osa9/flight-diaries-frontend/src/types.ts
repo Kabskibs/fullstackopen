@@ -7,8 +7,3 @@ export interface DiaryEntry {
 }
 
 export type NewDiaryEntry = Omit<DiaryEntry, 'id'>;
-
-export interface BackendError {
-  message: string;
-  errors: Record<string, string[]>
-}

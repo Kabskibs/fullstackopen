@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-import { DiaryEntry, NewDiaryEntry, BackendError } from './types';
+import { DiaryEntry, NewDiaryEntry } from './types';
 
 const App = () => {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
@@ -26,11 +26,15 @@ const App = () => {
     setNewEntryComment('');
   };
 
-  const toggleNotification = (message) => {
+  const toggleNotification = (message: string) => {
     setNotification(message);
     setTimeout(() => {
       setNotification('');
     }, 5000);
+  };
+
+  const isBackendError = (data: unknown): data is string => {
+    return typeof data === 'string' || data instanceof String;
   };
 
   const addNewEntry = async (event: React.SyntheticEvent) => {
@@ -46,14 +50,18 @@ const App = () => {
       setEntries(entries.concat(response.data));
       resetFields();
     } catch (error) {
-      if (axios.isAxiosError<BackendError, Record<string, unknown>>(error)) {
+      if (axios.isAxiosError(error)) {
         if (error.response) {
-          toggleNotification(error.response.data);
+          if (isBackendError(error.response.data)) {
+            toggleNotification(error.response.data);
+          } else {
+            toggleNotification('Error: Error response data malformatted');
+          }
         } else {
-          toggleNotification(`Error: No error response data: ${error}`)
+          toggleNotification(`Error: No error response data: ${error}`);
         }
       } else {
-        toggleNotification('Something went wrong.')
+        toggleNotification('Something went wrong.');
         console.error(error);
       }
     }
