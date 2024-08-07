@@ -24,7 +24,9 @@ const SinglePatientPage = () => {
     void fetchPatient();
   }, [id]);
 
-  if (patient) {
+  if (patient) {  // Renders page if everything is correct (this is the main render)
+    console.log('Patient: ', patient);
+    console.log('Entries: ', patient.entries);
     const genderIcon = () => {
       if (patient.gender === 'male') {
         return (
@@ -40,25 +42,67 @@ const SinglePatientPage = () => {
         );
       }
     };
-    return (
+    const patientEntries = () => {
+      if (patient.entries.length > 0) {
+        return (
+          <div>
+            <h3>Entries:</h3>
+            <div>
+              {patient.entries.map((e) => (
+                <div key={e.date}>
+                  <b>{e.date}</b> - {e.description}
+                </div>
+              ))}
+            </div>
+            <div>
+              <ul>
+                {patient.entries.map((d) => (
+                  d.diagnosisCodes ? (
+                    d.diagnosisCodes.map((a) => (
+                      <li>{a}</li>
+                    ))
+                  ) : (
+                    null
+                  )
+                ))}
+              </ul>
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <h3>No entries found</h3>
+          </div>
+        );
+      }
+    };
+    return (    // Main render return's here
       <div className="App">
-        <h2>
-          {patient.name} {genderIcon()}
-        </h2>
-        <p>
-          SSN: {patient.ssn}<br></br>
-          Occupation: {patient.occupation}
-        </p>
+        <div>
+          <h2>
+            {patient.name} {genderIcon()}
+          </h2>
+        </div>
+        <div>
+          <p>
+            SSN: {patient.ssn}<br></br>
+            Occupation: {patient.occupation}
+          </p>
+        </div>
+        <div>
+          {patientEntries()}
+        </div>
       </div>
     );
-  } else if (!id) {
+  } else if (!id) {   // Used for backup if somehow ends up working, with no ID
     return (
       <div>
         ID not found
       </div>
     );
   } else {
-    return (
+    return (    // If data is still loading 
       <div>
         loading data...
       </div>
