@@ -5,12 +5,14 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 
-import { Patient } from "../../types";
+import { Patient, Diagnosis } from "../../types";
 
 import patientService from "../../services/patients";
+import diagnosisService from "../../services/diagnoses";
 
 const SinglePatientPage = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[] | null>(null);
 
   const { id } = useParams<{ id: string }>();
 
@@ -21,12 +23,21 @@ const SinglePatientPage = () => {
         setPatient(response);
       }
     };
+    const fetchDiagnoses = async () => {
+      if (!diagnoses) {
+        const response = await diagnosisService.getAll();
+        setDiagnoses(response);
+      }
+    };
     void fetchPatient();
-  }, [id]);
+    void fetchDiagnoses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);   // Ignored, since with [id, diagnoses] this will execute twice
 
-  if (patient) {  // Renders page if everything is correct (this is the main render)
+  if (patient && diagnoses) {  // Renders page if everything is correct (this is the main render)
     console.log('Patient: ', patient);
     console.log('Entries: ', patient.entries);
+    console.log('Diagnoses: ', diagnoses);
     const genderIcon = () => {
       if (patient.gender === 'male') {
         return (
@@ -40,6 +51,14 @@ const SinglePatientPage = () => {
         return (
           <TransgenderIcon />
         );
+      }
+    };
+    const getDiagnosisName = (code: string) => {
+      const diagnose = diagnoses.find((d) => d.code === code);
+      if (diagnose) {
+        return diagnose.name;
+      } else {
+        return "No diagnose found";
       }
     };
     const patientEntries = () => {
@@ -59,7 +78,9 @@ const SinglePatientPage = () => {
                 {patient.entries.map((d) => (
                   d.diagnosisCodes ? (
                     d.diagnosisCodes.map((a) => (
-                      <li>{a}</li>
+                      <li key={`dcode${a}`}>
+                        {a} - {getDiagnosisName(a)}
+                      </li>
                     ))
                   ) : (
                     null
