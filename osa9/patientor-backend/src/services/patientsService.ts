@@ -8,6 +8,14 @@ const getAllData = (): Patient[] => {
   return patientsData;
 };
 
+const getDataByID = (id: string): Patient | string => {
+  const patient = patientsData.find(patient => patient.id === id);
+  if (!patient) {
+    return (`No data found with this ID: ${id}`);
+  }
+  return patient;
+};
+
 const getAllDataNoSSN = (): NoSSNPatient[] => {
   return patientsData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
@@ -30,6 +38,7 @@ const addDataEntry = (entry: NewPatientEntry): Patient => {
 
 export default {
   getAllData,
+  getDataByID,
   addDataEntry,
   getAllDataNoSSN
 };

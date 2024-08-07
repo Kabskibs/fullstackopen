@@ -8,6 +8,10 @@ router.get('/', (_req, res) => {
   res.send(patientsService.getAllDataNoSSN());
 });
 
+router.get('/:id', (req, res) => {
+  res.send(patientsService.getDataByID(req.params.id));
+});
+
 router.post('/', (req, res) => {
   try {
     const newPatientDataEntry = toNewPatientDataEntry(req.body);
@@ -20,15 +24,6 @@ router.post('/', (req, res) => {
     }
     res.status(400).send(errorMessage);
   }
-  /* const { name, dateOfBirth, ssn, gender, occupation } = req.body;
-  const addedEntry = patientsService.addDataEntry({
-    name,
-    dateOfBirth,
-    ssn,
-    gender,
-    occupation
-  });
-  res.json(addedEntry); */
 });
 
 export default router;
