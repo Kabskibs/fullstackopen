@@ -10,11 +10,11 @@ const parseArguments = (args: string[]): Values => {
     return {
       value1: Number(args[2]),
       value2: Number(args[3])
-    }
+    };
   } else {
-    throw new Error('You must provide values as numbers')
+    throw new Error('You must provide values as numbers');
   }
-}
+};
 
 export const calculateBmi = (height: number, weight: number) => {
   const heightToM: number = height / 100;
@@ -34,18 +34,18 @@ export const calculateBmi = (height: number, weight: number) => {
     weight: weight,
     height: height,
     bmi: message,
-  }
-}
+  };
+};
 
 try {
-  const { value1, value2 } = parseArguments(process.argv)
-  calculateBmi(value1, value2)
+  const { value1, value2 } = parseArguments(process.argv);
+  calculateBmi(value1, value2);
 } catch (error: unknown) {
   let errorMessage = 'Something went wrong. ';
   if (error instanceof Error) {
     errorMessage += 'Error: ' + error.message;
   }
-  console.log(errorMessage)
+  console.log(errorMessage);
 }
 
 export {};

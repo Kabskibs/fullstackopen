@@ -21,11 +21,11 @@ const parseArguments = (args: string[]): ArgsValues => {
     return {
       daysArray,
       target
-    }
+    };
   } else {
     throw new Error('All values must be numbers');
   }
-}
+};
 
 export const calculateExercises = (hours: number[], target: number): Result => {
   const daysTotal: number = hours.length;
@@ -58,8 +58,8 @@ export const calculateExercises = (hours: number[], target: number): Result => {
     ratingDescription: String(message),
     target: Number(target),
     average: Number(averageTime)
-  }
-}
+  };
+};
 
 try {
   const { daysArray, target } = parseArguments(process.argv);
